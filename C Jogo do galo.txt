@@ -1,0 +1,235 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+
+
+
+char Jogador1[20], Jogador2[20];
+int opcao;
+int opcao2;
+
+
+int menu() {
+    printf("\n---------Menu----------\n");
+    printf("1. Jogar\n");
+    printf("2. Introcoes\n");
+    printf("3. Sair\n");
+    printf("4. AI\n");
+    printf("-------------------------\n");
+    scanf("%d", &opcao);
+}
+
+void tabuleiro(char array[3][3]) {
+
+    printf("\n\n\n  1   2   3");
+    printf("\n1 | %c | %c | %c", array[0][0], array[0][1], array[0][2]);
+    printf("\n  -----------");
+    printf("\n2 | %c | %c | %c", array[1][0], array[1][1], array[1][2]);
+    printf("\n  -----------");
+    printf("\n3 | %c | %c | %c", array[2][0], array[2][1], array[2][2]);
+}
+
+void vez(char array[3][3], char a, char* jogador) {
+    int linha, coluna, vez = 1;
+
+    do {
+        printf("\n%s, digite a linha (1 - 3):", jogador);
+        scanf("%d", &linha);
+        linha--;
+        printf("\n%s, digite a coluna (1 - 3):", jogador);
+        scanf("%d", &coluna);
+        coluna--;
+
+        if (array[linha][coluna] != ' ')
+            printf("\nJogada invalida.");
+        else {
+            array[linha][coluna] = a;
+            vez = 0;
+        }
+    } while (vez == 1);
+}
+
+void vezAI(char array[][3], char a, char* jogador) {
+    int vezAI = 1;
+
+    while (vezAI) {
+        srand(time(NULL));
+        int linha = (rand() % 3) + 1;
+        linha--;
+
+        srand(time(NULL));
+        int coluna = (rand() % 3) + 1;
+        coluna--;
+
+        if (array[linha][coluna] != ' '){}
+        else {
+            array[linha][coluna] = a;
+            vezAI = 0;
+        }
+    }
+}
+
+int verifica(char array[][3], char a, char* jogador) {
+    int i;
+
+    //linhas
+    for (i = 0; i < 3; i++) {
+        if (array[0][i] == a && array[1][i] == a && array[2][i] == a) {
+            printf("\n\n%s Venceu!", jogador);
+            return 1;
+        }
+    }
+
+    //Colunas
+    for (i = 0; i < 3; i++) {
+        if (array[i][0] == a && array[i][1] == a && array[i][2] == a) {
+            printf("\n\n%s Venceu!", jogador);
+            return 1;
+        }
+    }
+
+    //Diagonais
+    if (array[0][0] == a && array[1][1] == a && array[2][2] == a) {
+        printf("\n\n%s Venceu!", jogador);
+        return 1;
+    }
+
+    if (array[0][2] == a && array[1][1] == a && array[2][0] == a) {
+        printf("\n\n%s Venceu!", jogador);
+        return 1;
+    }
+
+    return 0;
+}
+
+int solo(){
+    printf("\n\nDigite o nome do jogador 1:");
+    scanf(" %[^\n]", Jogador1);
+}
+
+int introcoes() {
+    printf("\n\nDigite o numero da linha e de enter, e depois digite o numero da linha.\n");
+    printf("Lembre-se que so pode digitar numeros de 1-3\n");
+}
+
+int perguntaNome() {
+    printf("\n\nDigite o nome do jogador 1:");
+    scanf(" %[^\n]", Jogador1);
+    printf("\n\nDigite o nome do jogador 2:");
+    scanf(" %[^\n]", Jogador2);
+
+    return 0;
+}
+
+int jogarDnv() {
+    printf("\n\n-------------------------");
+    printf("\n Deseja jogar denovo?");
+    printf("\n1. Sim");
+    printf("\n2. Regressar ao Menu");
+    printf("\n-------------------------\n");
+    scanf("%d", &opcao2);
+}
+
+
+int main() {
+    int P1jgs = 0, P2jgs = 0, AI = 0;
+    char x = 'X', o = 'O';
+
+    do {
+        menu();
+        switch (opcao) {
+            case 1:
+                int contador = 0;
+                perguntaNome();
+
+            do {
+                int gg = 0;
+                contador = 0;
+                char tabu[3][3] = {"   ", "   ", "   "};
+
+                do {
+                    tabuleiro(tabu);
+                    printf("\n\n Joga: %s :", Jogador1);
+                    vez(tabu, x, Jogador1);
+                    tabuleiro(tabu);
+                    if (gg = verifica(tabu, x, Jogador1) == 1) {
+                        P1jgs++;
+                        break;
+                    }
+                    contador++;
+                    if (contador == 9) {
+                        gg = 1;
+                        printf("\nEmpate!");
+                        break;
+                    }
+
+                    printf("\n\nJoga:  %s", Jogador2);
+                    vez(tabu, o, Jogador2);
+                    tabuleiro(tabu);
+                    if (gg = verifica(tabu, o, Jogador2) == 1) {
+                        P2jgs++;
+                        break;
+                    }
+                    contador++;
+                } while (contador < 10);
+
+                jogarDnv();
+
+            } while (opcao2 == 1);
+
+            break;
+
+            case 2:
+                introcoes();
+                break;
+            case 3:
+                printf("\n\nObrigado por jogar!");
+                break;
+            default:
+                printf("Digite uma opcao valida.");
+                break;
+            case 4:
+
+                solo();
+
+            do {
+                int gg = 0;
+                int contador = 0;
+                char tabu[3][3] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
+
+                do {
+                    tabuleiro(tabu);
+                    printf("\n\n Joga: %s :", Jogador1);
+                    vez(tabu, x, Jogador1);
+                    tabuleiro(tabu);
+                    if (verifica(tabu, x, Jogador1)) {
+                        P1jgs++;
+                        break;
+                    }
+                    contador++;
+
+                    if (contador == 9) {
+                        printf("Empate!");
+                        gg = 1;
+                        break;
+                    }
+
+                    vezAI(tabu, o, "AI");
+                    tabuleiro(tabu);
+                    if (verifica(tabu, o, "AI")) {
+                        AI++;
+                        break;
+                    }
+                    contador++;
+
+                } while (contador < 9);
+
+                jogarDnv();
+
+                } while (opcao2 == 1);
+                break;
+        }
+    } while (opcao != 3);
+
+    return 0;
+}
